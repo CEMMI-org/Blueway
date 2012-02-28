@@ -1,0 +1,5 @@
+Fork of the CEMMI Blueway repository
+---
+Additions:
+mobius.py -- repeatedly "flip" the strip like a ribbon
+conway.py -- simple condensed Conway's Game of Life

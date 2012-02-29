@@ -4,7 +4,7 @@ MODES = ["FILE","WEB","LIVE"]
 
 class CONFIG:
      # general settings
-     mode = 1 # 0=render to file,1=websocket, 2=live to lights
+     mode = 2 # 0=render to file,1=websocket, 2=live to lights
      disableColormap = True
 
      #sim settings

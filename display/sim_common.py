@@ -3,9 +3,9 @@
 import socket
 import sys
 from display import colormap
-from random import random as randomF
 from numpy import zeros,array
 from config import Ds
+from util.ColorOps import floatToIntColor
 # best when canvas w(1000), h(200) are divisible by size[2], size[3]
 
 def make_sockets(Ds):
@@ -27,29 +27,6 @@ def make_locs(sockets):
                 y=offset[1]+(chan-1)*y_space + j*(between_chains)
                 locs.append([x,y])
     return locs
-
-def floatToIntColor(rgb):
-    a=(rgb*255+.5).round()
-    a[a>255] = 255
-    a[a<0] = 0
-    return a
-
-def randomBrightColor():
-    hue = randomF()
-    sat = randomF()/2.0 + .5
-    val = 1.0
-    hue, sat, val = colorsys.hsv_to_rgb(hue, sat, val)
-    ret = array([hue, sat, val])
-    return floatToIntColor(ret)
-
-def randomDimColor(value):
-    hue = randomF()
-    sat = randomF()/2.0 + .5
-    val = value
-    hue, sat, val = colorsys.hsv_to_rgb(hue, sat, val)
-    ret = array([hue, sat, val])
-    return floatToIntColor(ret)    
-    
 
 def display(data, sock, chan=1):
    return floatToIntColor(data).reshape(50,3)

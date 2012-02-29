@@ -11,54 +11,16 @@ from display.route_display import *
 # configuration options for how the display command is routed may be found
 # in config/__init__.py  DEFAULT file-based rendering will be deprecated soon
 
-OFF = [0,0,0]
-CYAN = [0,0,1]
+BLACK = [0,0,0]
+CYAN = [0,1,1]
 MAGENTA = [1,0,1]
-GREEN = [0,1,0]
+YELLOW = [1,1,0]
 RED = [1,0,0]
-ON = [1,1,1]
+GREEN = [0,1,0]
+BLUE = [0,0,1]
+WHITE = [1,1,1]
 
-def main2():
-     incr, loopStart, delay = getCommandLineOptions()
-
-     # initialize a display at full white (1.0)
-     lights = LightMatrix(1.0) 
-     
-     # send values to the lights/simulator for a count of 2 seconds
-     # to give the browser time to open, etc.
-     print "initializing...",
-     for i in range(2):
-          lights.display()
-          sleep(1)
-     print "...done init()"
-     
-     # set up an array to cycle through colors
-     colors = [CYAN, MAGENTA, YELLOW, OFF, ON]
-     colorIndex = 0
-
-     loopCount = loopStart # default 0
-
-     # loop forever until ctrl-c is pressed
-     while 1:
-          # loop over all columns of the lights, assigning the new value
-          while loopCount < lights.cols and loopCount >= loopStart:
-               lights.display()
-               lights.changeColumn(loopCount, colors[colorIndex])
-               sleep(delay/1000.) # sleep takes seconds
-               loopCount += incr
-
-          # After getting up to 50 or down to -1, increment the colorIndex.
-          colorIndex += 1
-          # The modulo operator "%" says take the remainder of a division, so
-          # colorIndex will count: 0,1,2,3,4,0,1,2,3,4 since len(colors) == 5 .
-          colorIndex = colorIndex % len(colors)
-          
-          # Reverse the direction of pattern movement.
-          incr = -incr 
-          
-          #ensure the loopCount index remains in the actual lights
-          loopCount = max(min(loopCount,lights.cols-1),0)
-
+ALL_SIMPLE = ["BLACK","WHITE","CYAN","MAGENTA","YELLOW","RED","GREEN","BLUE"]
 def main():
      incr, loopStart, delay = getCommandLineOptions()
 
@@ -73,20 +35,41 @@ def main():
           sleep(1)
      print "...done init()"
      
+     
+     for name in ALL_SIMPLE:
+          lights.createWindow(name,globals()[name])    
+     # set up an array to cycle through colors
+     colors = [["RED","GREEN"],
+               ["GREEN","BLUE"],
+               ["BLUE","RED"],
+               ["YELLOW","CYAN"],
+               ["CYAN","MAGENTA"],
+               ["MAGENTA","YELLOW"]]
+     colorIndex = 0
+     edge = 10
+     loopCount = loopStart # default 0
 
-     loopCount=loopStart #0
-     lights.createWindow("GREEN",GREEN)
-     lights.createWindow("RED",RED)
+     # loop forever until ctrl-c is pressed
+     while 1:
+          # loop over all columns of the lights, assigning the new value
+        
+          loopCount=loopStart #0
+          color1, color2 = colors[colorIndex]
 
-     while loopCount < lights.cols-10 and loopCount >= loopStart:
+          while loopCount < lights.cols+edge: # and loopCount >= loopStart:
                lights.display()
                lights.clear()
-               lights.insertWindow("GREEN",lights.cols-10-loopCount)
-               lights.insertWindow("RED",loopCount)
+               lights.insertWindow(color1,lights.cols-loopCount-1)
+               lights.insertWindow(color2,loopCount-edge)
                sleep(delay/1000.) # sleep takes seconds
                loopCount += incr
-
      
+          # After getting up to 50 or down to -1, increment the colorIndex.
+          colorIndex += 1
+          # The modulo operator "%" says take the remainder of a division, so
+          # colorIndex will count: 0,1,2,3,4,0,1,2,3,4 since len(colors) == 5 .
+          colorIndex = colorIndex % len(colors)
+      
 class LightMatrix:
      """ Class for storing data to be sent to lights """
 
@@ -116,7 +99,22 @@ class LightMatrix:
      def insertWindow(self,name,index):
          """inserts window into the display""" 
          window=self.windows[name]
-         self.data[:,index:index+window.shape[1]]+=window         
+         idx1=index
+         idx2=index+window.shape[1]
+         #print name,idx1,idx2
+         idx1=min(max(0,idx1),self.data.shape[1])
+         idx2=min(max(0,idx2),self.data.shape[1])
+         #print name,idx1,idx2
+         # assumes window is uniform, so doesn't matter where we cut it off
+         self.data[:,idx1:idx2]+=window[:,0:abs(idx2-idx1)]
+
+         #normalize
+         maxVal = max(self.data.flatten())
+         if maxVal != 0:
+              #print maxVal
+              self.data[self.data != maxVal] = 0
+              self.data[self.data == maxVal] = 1
+
 
      def changeRow(self,row,color):
           """ pass in which row to change and either:

@@ -8,7 +8,7 @@ class CONFIG:
      disableColormap = True
 
      #sim settings
-     openbrowser = True
+     openbrowser = False
 
      #file mode settings
      pageRefresh = 0

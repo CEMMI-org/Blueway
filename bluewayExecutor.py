@@ -29,7 +29,9 @@ from light_matrix import LightMatrix
 #-----------------------
 # USER IMPORTS
 #   Import your light_matrix.BluewayPattern extensions here!
-from example3 import Example3Pattern
+from normalDistributedPixels import *
+from riverWipe import *
+from rainbowRiver import *
 
 userPatterns = [] #Array to keep track of BluewayPattern instances
 def initializeUserPatterns(args, tickDelay, secondsPerPattern):
@@ -55,12 +57,19 @@ def initializeUserPatterns(args, tickDelay, secondsPerPattern):
      @param tickDelay: The number of ms in between each tick that your patterns will be executed with
      @param secondsPerPattern: The number of seconds your pattern will be allocated'''
      
-     # This example executor cycles through two versions of the same example pattern -- 
-     # one with default params, and one with command-line args (first arg is incrementor, second is initial col)
-     # try running like this: $ python bluewayExecutor.py --tickDelay 100 --secondsPerPattern 5 5 1
+     #userPatterns.append(Example3Pattern(getPatternLM()))
+     #userPatterns.append(Example3Pattern(getPatternLM(), int(args[0]), int(args[1])))
+     userPatterns.append(RainbowRiver(getPatternLM(), getPatternLM(), tickDelay, 10., 
+                                      hueMean = .7, hueStdDev = .1, satMean = .7, satStdDev = .1,
+                                      numRainbows = 3, rainbowWidth = 0))
      
-     userPatterns.append(Example3Pattern(getPatternLM()))
-     userPatterns.append(Example3Pattern(getPatternLM(), int(args[0]), int(args[1])))
+     userPatterns.append(RiverWipe(getPatternLM(), 2000./tickDelay, whiteWidth = 20))
+     userPatterns.append(RainbowRiver(getPatternLM(), getPatternLM(), tickDelay, 10., 
+                                      hueMean = .7, hueStdDev = .1, satMean = .7, satStdDev = .1,
+                                      numRainbows = 3, rainbowWidth = 10))
+     #userPatterns.append(NormalDistributedPixels(getPatternLM(), 5000./tickDelay, 
+     #                                            float(args[0]), float(args[1]),
+     #                                            float(args[2]), float(args[3])))
 
 # --------- END USER CONFIG ------------
 
@@ -102,14 +111,15 @@ def main():
           
           while (tickI < numberOfTicks):
                #print 'tick ', tickI, '/', numberOfTicks
-               try:
-                    userPatterns[patternI].tick()
-               except Exception as err:
-                    print 'Pattern ', patternI, ' errored out: \n  ', err.__class__, ': ', err
-                    print 'Moving on to next pattern...'
-                    patternI = (patternI + 1) % len(userPatterns)
-                    sleep(tickDelay / 1000.)
-                    continue
+               userPatterns[patternI].tick()
+#               try:
+#                    userPatterns[patternI].tick()
+#               except Exception as err:
+#                    print 'Pattern ', patternI, ' errored out: \n  ', err.__class__, ': ', err
+#                    print 'Moving on to next pattern...'
+#                    patternI = (patternI + 1) % len(userPatterns)
+#                    sleep(tickDelay / 1000.)
+#                    continue
                
                #display the Pattern's modifications
                lights.data = userPatterns[patternI].lights.data
@@ -131,7 +141,7 @@ def getCommandLineOptions():
      (opts, args) = parser.parse_args()
    
      tickDelay = opts.tickDelay or 100 # in milliseconds
-     secondsPerPattern = opts.secondsPerPattern or 20
+     secondsPerPattern = opts.secondsPerPattern or 10
      
      return (tickDelay, secondsPerPattern, args)
 

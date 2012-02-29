@@ -28,6 +28,11 @@ else:
         print "warning, file mode will be deprecated soon. Download pygame if websockets don't work for you"
         if CONFIG.openbrowser: 
             webbrowser.open(os.getcwd()+'/LEDs.html')
+    if CONFIG.getMode() == "GAME":
+        from game import pg_display
+        screen=pg_display.GameScreen()
+        print "PyGame Mode"
+
     locs = make_locs(sockets)
     screen.setup_screen([0,0,500,50],locs)
 

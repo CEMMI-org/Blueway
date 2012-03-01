@@ -3,7 +3,7 @@
 
 # imports 
 import optparse, time, sys
-from numpy import ones, zeros, array
+from numpy import ones, zeros, array, apply_along_axis,where
 from time import sleep
 
 from display.route_display import *
@@ -35,9 +35,6 @@ def main():
           sleep(1)
      print "...done init()"
      
-     
-     for name in ALL_SIMPLE:
-          lights.createWindow(name,globals()[name])    
      # set up an array to cycle through colors
      colors = [["RED","GREEN"],
                ["GREEN","BLUE"],
@@ -45,8 +42,11 @@ def main():
                ["YELLOW","CYAN"],
                ["CYAN","MAGENTA"],
                ["MAGENTA","YELLOW"]]
-     colorIndex = 0
      edge = 10
+     
+     for name in ALL_SIMPLE:
+          lights.createWindow(name,globals()[name],edge)
+     colorIndex = 0
      loopCount = loopStart # default 0
 
      # loop forever until ctrl-c is pressed
@@ -91,30 +91,36 @@ class LightMatrix:
          self.data*=0
 
      def createWindow(self,name,color,width=10):
-          """ creates a named window of specified width"""
+          """ creates a named window of specified width and color"""
           data=ones([self.rows,width,self.channels])
           data[:,:,:]=color
           self.windows[name]=data
 
      def insertWindow(self,name,index):
-         """inserts window into the display""" 
+         """inserts window into the display, combines overlapping colors
+            by showing the combination i.e. RED+GREEN = YELLOW
+            or showing the color in common: CYAN+YELLOW = GREEN """ 
+
          window=self.windows[name]
          idx1=index
          idx2=index+window.shape[1]
-         #print name,idx1,idx2
+
+         #make sure idx1 and idx2 fall within bounds
          idx1=min(max(0,idx1),self.data.shape[1])
          idx2=min(max(0,idx2),self.data.shape[1])
-         #print name,idx1,idx2
+
+         existing = self.data[:,idx1:idx2].view()
          # assumes window is uniform, so doesn't matter where we cut it off
-         self.data[:,idx1:idx2]+=window[:,0:abs(idx2-idx1)]
-
-         #normalize
+	 new = window[:,0:abs(idx2-idx1)].view()
+	 self.data[:,idx1:idx2] = new+existing
+         
          maxVal = max(self.data.flatten())
-         if maxVal != 0:
-              #print maxVal
-              self.data[self.data != maxVal] = 0
-              self.data[self.data == maxVal] = 1
-
+         
+         #case where we want just the color(s) in common...
+         if maxVal > 1:
+	      testOne = lambda(color):any(color==maxVal)
+              indices=apply_along_axis(testOne,2,existing)
+              existing[indices]-=1
 
      def changeRow(self,row,color):
           """ pass in which row to change and either:

@@ -48,6 +48,12 @@ if __name__ == '__main__':
 	
         while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
 		
+
+		if (opts.time and (opts.time - stopwatch.elapsed()/1000.0) <= 2):
+			brightness2 = ((opts.time - stopwatch.elapsed()/1000.0))/2
+			if brightness2 < brightness:
+				brightness = brightness2
+
 		
 		data[:,0,:] = brightness * colorf[0] * box[x:x+50, y:y+4]
 		data[:,1,:] = brightness * colorf[1] * box[x:x+50, y:y+4]
@@ -59,7 +65,7 @@ if __name__ == '__main__':
 		colorf[:] *= 1+(numpy.random.random(3))		
 		colorf[:] *= 1/(colorf[0] + colorf[1] + colorf[2])
 
-		time.sleep((opts.delay or 500)/1000.)
+		time.sleep((opts.delay or 250)/1000.)
 		
 		x += xv
 		y += yv

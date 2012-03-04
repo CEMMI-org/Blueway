@@ -27,13 +27,23 @@ if __name__ == '__main__':
 	data[:,1,:] -= .5
 	data[:,2,:] -= .5
 	
-	
+	brightness = 1
+
         while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
+
+		if (stopwatch.elapsed() < 2000):
+			brightness = stopwatch.elapsed() / 2000
+		elif (opts.time and (opts.time - stopwatch.elapsed()/1000.0) <= 2):
+			brightness = ((opts.time - stopwatch.elapsed()/1000.0))/2
+		else:			
+			brightness = 1
+
+
 		
-		route_display(numpy.reshape(data, (150,4)))
+		route_display(brightness * numpy.reshape(data, (150,4)))
 		#data = numpy.roll(numpy.reshape(data, (50,3,4)), 1, 2)
 		data = numpy.roll(numpy.reshape(data, (50,3,4)), 1)
-		time.sleep((opts.delay or 500)/1000.)
+		time.sleep((opts.delay or 250)/1000.)
 		
 		if (loopCount % 12 == 0):
 			data[:,:,1] = numpy.reshape(numpy.random.random(150), (50,3))

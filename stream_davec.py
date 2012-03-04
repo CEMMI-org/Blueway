@@ -36,12 +36,22 @@ if __name__ == '__main__':
 	data[:,0,:] -= .7
 	data[:,1,:] -= .7
 
+	brightness = 1
+
         while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
+
+		if (stopwatch.elapsed() < 2000):
+			brightness = stopwatch.elapsed() / 2000
+		elif (opts.time and (opts.time - stopwatch.elapsed()/1000.0) <= 2):
+			brightness = ((opts.time - stopwatch.elapsed()/1000.0))/2
+		else:			
+			brightness = 1
+
 		
-		route_display(numpy.reshape(data, (150,4)))
+		route_display(brightness * numpy.reshape(data, (150,4)))
 		data = numpy.roll(numpy.reshape(data, (50,3,4)), 2, 1)
 		data = numpy.roll(data, 16 *(1 + 3*(incrementor-1)) )
-		time.sleep((opts.delay or 500)/1000.)
+		time.sleep((opts.delay or 250)/1000.)
 		
 		if (numpy.random.random(1) > .5):
 			dot1 = [numpy.random.randint(0,50),numpy.random.randint(0,4)]

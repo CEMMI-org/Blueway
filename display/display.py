@@ -25,8 +25,8 @@ def displayi(data,sock,chan=1,CM=colormap.MATLAB_COLORMAP):
 def imdisplay(data,socks,mapping):
    sz = len(socks);
    for i in range(0,sz):
-     display(data[:,mapping[2*i]-1],socks[i],1)
-     display(data[:,mapping[2*i+1]-1],socks[i],2)
+     display(data[:,mapping[2*i%4]-1],socks[i],1)
+     display(data[:,mapping[2*i%4+1]-1],socks[i],2)
 
 def imdisplayi(data,socks,mapping,CM=colormap.MATLAB_COLORMAP):
    sz = len(socks);

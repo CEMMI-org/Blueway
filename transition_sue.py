@@ -42,7 +42,7 @@ def main():
                ["YELLOW","CYAN"],
                ["CYAN","MAGENTA"],
                ["MAGENTA","YELLOW"]]
-     edge = 10
+     edge = 25
      
      for name in ALL_SIMPLE:
           lights.createWindow(name,globals()[name],edge)

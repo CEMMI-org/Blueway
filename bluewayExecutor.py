@@ -22,7 +22,7 @@ Run this python class with the following options:
 import optparse, time, sys
 from numpy import ones, zeros, array
 from time import sleep
-
+import util.TimeOps as timeops
 from display.route_display import *
 from light_matrix import LightMatrix
 
@@ -85,7 +85,8 @@ def main():
      config = getCommandLineOptions()
      tickDelay = config[0]
      secondsPerPattern = config[1]
-     args = config[2] # any misc. user args
+     totalTime = config[2]
+     args = config[3] # any misc. user args
 
      # initialize master display at full white (1.0)
      lights = LightMatrix(route_display, 1.0) 
@@ -101,11 +102,16 @@ def main():
           sleep(1)
      print "...done init()"
      
+
+     stopwatch = timeops.Stopwatch()
+     stopwatch.start()
      # Loop through all patterns
      numberOfTicks = secondsPerPattern * 1000 / tickDelay
      patternI = 0
      tickI = 0
-     while True:
+     while ((not totalTime) or stopwatch.elapsed() / 1000 < totalTime):
+		#if (stopwatch.elapsed() < 2000):
+		#	brightness = stopwatch.elapsed() / 2000
           print 'Playing pattern ', patternI
           #print 'lights.data: ', lights.data
           
@@ -138,12 +144,14 @@ def getCommandLineOptions():
      parser = optparse.OptionParser(usage="%prog [options] pattern-specific arguments")
      parser.add_option("--tickDelay", action="store", type="int", help="Delay in ms for each tick of the pattern")
      parser.add_option("--secondsPerPattern", action="store", type="int", help="How many seconds to display each pattern for")
+     parser.add_option("--time", action="store", type="int", help="number of seconds to run")
+
      (opts, args) = parser.parse_args()
    
      tickDelay = opts.tickDelay or 100 # in milliseconds
      secondsPerPattern = opts.secondsPerPattern or 10
-     
-     return (tickDelay, secondsPerPattern, args)
+     time = opts.time or None 
+     return (tickDelay, secondsPerPattern, time, args)
 
 if __name__ == '__main__':
      main()

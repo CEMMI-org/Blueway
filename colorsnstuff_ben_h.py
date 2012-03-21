@@ -5,12 +5,17 @@ import optparse, time, sys
 from display.route_display import *
 from numpy import ones, zeros
 import numpy as np
-
+import util.TimeOps as timeops
 if __name__ == '__main__':
 	parser = optparse.OptionParser(usage="%prog [options] incrementor")
 	parser.add_option("--delay", action="store", type="int", help="set delay in milliseconds for each loop")
 	parser.add_option("--start", action="store", type="int", help="which channel to start the incrementor at")
+	parser.add_option("--time", action="store", type="int", help="number of seconds to run")
+
 	(opts, args) = parser.parse_args()
+	stopwatch = timeops.Stopwatch()
+	stopwatch.start()
+
 #	if len(args) != 1:
 #		parser.error("incorrect number of arguments")	
 	try:
@@ -113,7 +118,9 @@ if __name__ == '__main__':
 	MULTLENGTH = 67
 	vmult = np.concatenate([np.linspace(0,1,MULTLENGTH/2+1),np.linspace(1,0,MULTLENGTH/2)])
 	
-	while 1:
+        while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
+		#if (stopwatch.elapsed() < 2000):
+		#	brightness = stopwatch.elapsed() / 2000
 		route_display(data)
 #		time.sleep((opts.delay or 500)/1000.)
 		time.sleep(0.1)

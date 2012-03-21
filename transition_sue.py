@@ -6,6 +6,7 @@ import optparse, time, sys
 from numpy import ones, zeros, array, apply_along_axis,where
 from time import sleep
 
+import util.TimeOps as timeops
 from display.route_display import *
 
 # configuration options for how the display command is routed may be found
@@ -22,8 +23,10 @@ WHITE = [1,1,1]
 
 ALL_SIMPLE = ["BLACK","WHITE","CYAN","MAGENTA","YELLOW","RED","GREEN","BLUE"]
 def main():
-     incr, loopStart, delay = getCommandLineOptions()
+     incr, loopStart, delay, totalTime = getCommandLineOptions()
 
+     stopwatch = timeops.Stopwatch()
+     stopwatch.start()
      # initialize a display at full white (1.0)
      lights = LightMatrix(0.0) 
      
@@ -50,7 +53,10 @@ def main():
      loopCount = loopStart # default 0
 
      # loop forever until ctrl-c is pressed
-     while 1:
+     # while 1:
+     while ((not totalTime) or stopwatch.elapsed() / 1000 < totalTime):
+		#if (stopwatch.elapsed() < 2000):
+		#	brightness = stopwatch.elapsed() / 2000
           # loop over all columns of the lights, assigning the new value
         
           loopCount=loopStart #0
@@ -160,15 +166,17 @@ def getCommandLineOptions():
      parser = optparse.OptionParser(usage="%prog [options] incrementor")
      parser.add_option("--delay", action="store", type="int", help="set delay in milliseconds for each loop")
      parser.add_option("--start", action="store", type="int", help="which channel to start the incrementor at")
+     parser.add_option("--time", action="store", type="int", help="number of seconds to run")
+
      (opts, args) = parser.parse_args()
      if len(args) != 1:
           parser.error("incorrect number of arguments")     
      msDelay = opts.delay or 100 # in milliseconds
      incr = int(args[0])
-          
+     time = opts.time or None
      loopStart = opts.start or 0  #opts.start will be "None" if not specified
      
-     return incr, loopStart, msDelay
+     return incr, loopStart, msDelay, time
 
 if __name__ == '__main__':
      main()

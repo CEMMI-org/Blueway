@@ -6,6 +6,7 @@ import optparse, time, sys, colorsys
 from numpy import *
 from time import sleep
 
+import util.TimeOps as timeops
 from display.route_display import *
 
 # configuration options for how the display command is routed may be found
@@ -18,7 +19,9 @@ YELLOW = [1,1,0]
 ON = [1,1,1]
 
 def main():
-     incr, loopStart, delay = getCommandLineOptions()
+     incr, loopStart, delay, totalTime = getCommandLineOptions()
+     stopwatch = timeops.Stopwatch()
+     stopwatch.start()
 
      # initialize a display at full white (1.0)
      lights = LightMatrix(1.0) 
@@ -44,8 +47,9 @@ def main():
      calculation2 = math.sin( math.radians(timeDisplacement * -3.6352262))
      # loop forever until ctrl-c is pressed
   
-     while 1:
-         
+     while ((not totalTime) or stopwatch.elapsed() / 1000 < totalTime):
+          #if (stopwatch.elapsed() < 2000):
+          #      brightness = stopwatch.elapsed() / 2000
 
           for x in range(0,lights.rows) : #for (int x = 0; x < pg.width; x++, xc += pixelSize) :
               xc = xc + pixelSize
@@ -131,7 +135,7 @@ class LightMatrix:
                   pix[idx][3] += (step-pix[idx][2]) % steps / float(steps)
                   tmpPix = pix
                   if step>0 and step%100==0 and step<400 :
-                      print step
+                      #print step
                       x2=pix[idx][0]
                       y2=pix[idx][1]
                       self.tryAppend(x2+1,y2+1,step,0,tmpPix)
@@ -163,15 +167,16 @@ def getCommandLineOptions():
      parser = optparse.OptionParser(usage="%prog [options] incrementor")
      parser.add_option("--delay", action="store", type="int", help="set delay in milliseconds for each loop")
      parser.add_option("--start", action="store", type="int", help="which channel to start the incrementor at")
+     parser.add_option("--time", action="store", type="int", help="number of seconds to run")
      (opts, args) = parser.parse_args()
      if len(args) != 1:
           parser.error("incorrect number of arguments")     
      msDelay = opts.delay or 100 # in milliseconds
      incr = int(args[0])
-          
+     time = opts.time or None
      loopStart = opts.start or 0  #opts.start will be "None" if not specified
      
-     return incr, loopStart, msDelay
+     return incr, loopStart, msDelay, time
 
 if __name__ == '__main__':
      main()

@@ -1,13 +1,26 @@
-example2.py 1
-chase_matt.py 1
-colorsnstuff_ben_h.py 1
-conway_dewb.py 1
-crtmatrix_davec.py 1
-mobius_dewb.py 1
-plasma_seth.py 1
-rgbspot_davec.py 1
-ripple_jason_s.py 1
-spooky_davec.py 1
-stream_davec.py 1
-transition_sue.py 1
-bluewayExecutor.py 1
+example2.py 1 --time 120
+chase_matt.py 1 --time 120
+colorsnstuff_ben_h.py 1 --time 120
+conway_dewb.py 1 --time 120
+crtmatrix_davec.py 1 --time 120
+mobius_dewb.py 1 --time 120
+plasma_seth.py 1 --time 120
+rgbspot_davec.py 1 --time 120
+ripple_jason_s.py 1 --time 120
+spooky_davec.py 1 --time 120
+stream_davec.py 1 --time 120
+transition_sue.py 1 --time 120
+bluewayExecutor.py 1 --secondsPerPattern 60 --time 360
+example2.py 1 --time 120
+chase_matt.py 1 --time 120
+colorsnstuff_ben_h.py 1 --time 120
+conway_dewb.py 1 --time 120
+crtmatrix_davec.py 1 --time 120
+mobius_dewb.py 1 --time 120
+plasma_seth.py 1 --time 120
+rgbspot_davec.py 1 --time 120
+ripple_jason_s.py 1 --time 120
+spooky_davec.py 1 --time 120
+stream_davec.py 1 --time 120
+transition_sue.py 1 --time 120
+bluewayExecutor.py 1 --secondsPerPattern 60 --time 360

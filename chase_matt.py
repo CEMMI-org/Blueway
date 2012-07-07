@@ -5,6 +5,7 @@ import optparse, time, sys
 from display.route_display import *
 from numpy import ones, zeros
 
+import util.TimeOps as timeops
 def CopyIntoArrayFromLeft(smArray, lgArray, lgPosition):
 	smLen = len(smArray)
 	lgLen = len(lgArray)
@@ -24,6 +25,13 @@ def CopyIntoArrayFromLeft(smArray, lgArray, lgPosition):
 	return
 
 if __name__ == '__main__':
+	parser = optparse.OptionParser(usage="%prog [options] incrementor")
+	parser.add_option("--time", action="store", type="int", help="number of seconds to run")
+	(opts, args) = parser.parse_args()
+
+	stopwatch = timeops.Stopwatch()
+	stopwatch.start()
+
 	chainLength = 50
 	chainWidth = 4
 	delay = .05
@@ -33,7 +41,10 @@ if __name__ == '__main__':
 	row = 0
 	rowCount = 0
 	loopCount = 0
-	while rowCount <= 100:
+        while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
+		#if (stopwatch.elapsed() < 2000):
+		#	brightness = stopwatch.elapsed() / 2000
+	#while rowCount <= 100:
 		while loopCount <= chainLength*3+len(trailRight):
 			#print data
 			route_display(data)

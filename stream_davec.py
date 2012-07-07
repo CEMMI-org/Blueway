@@ -37,7 +37,7 @@ if __name__ == '__main__':
 	data[:,1,:] -= .7
 
 	brightness = 1
-
+	thisD= numpy.reshape(data,(150,4))
         while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
 
 		if (stopwatch.elapsed() < 2000):
@@ -47,10 +47,11 @@ if __name__ == '__main__':
 		else:			
 			brightness = 1
 
-		
-		route_display(brightness * numpy.reshape(data, (150,4)))
-		data = numpy.roll(numpy.reshape(data, (50,3,4)), 2, 1)
-		data = numpy.roll(data, 16 *(1 + 3*(incrementor-1)) )
+		#lastD = thisD.copy()
+		thisD = (brightness * numpy.reshape(data, (150,4)))
+		route_display(thisD)#*.5+lastD*.5)
+		data = numpy.roll(numpy.reshape(data, (50,3,4)), -2, 1)
+		data = numpy.roll(data, -16 *(1 + 3*(incrementor-1)) )
 		time.sleep((opts.delay or 250)/1000.)
 		
 		if (numpy.random.random(1) > .5):

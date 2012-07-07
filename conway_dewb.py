@@ -25,7 +25,7 @@ import optparse, time, sys, math, pdb, numpy
 from display.route_display import *
 from copy import deepcopy
 from math import pi
-
+import util.TimeOps as timeops
 
 def lerp(x, y, t):
 	return x+t*(y-x)
@@ -144,7 +144,7 @@ def runFn_continuousConway(world):
 			wt1[i,j] = F(E(i,j))
 	return wt1
 
-def life(initFunc, runFunc, combineFunc, w2dFunc, restart):
+def life(initFunc, runFunc, combineFunc, w2dFunc, restart, stopwatch):
 	global gGeneration
 	global gRenderFrame
 	global gOptions
@@ -153,7 +153,10 @@ def life(initFunc, runFunc, combineFunc, w2dFunc, restart):
 	gGeneration = 0
 	prevGenFrameData = data
 
-	while 1:
+        while ((not opts.time) or stopwatch.elapsed() / 1000 < opts.time):
+		#if (stopwatch.elapsed() < 2000):
+		#	brightness = stopwatch.elapsed() / 2000
+	
 		world1 = runFunc(world)
 		fc = gOptions['framesPerGeneration']
 		for gRenderFrame in range(0, fc):
@@ -185,8 +188,12 @@ if __name__ == '__main__':
 	parser.add_option("--delay", action="store", type="int", help="set delay in milliseconds for each loop")
 	parser.add_option("--start", action="store", type="int", help="which channel to start the incrementor at")
 	parser.add_option("--resetgen", action="store", type="int", help="number of generations to run before restarting")
+	parser.add_option("--time", action="store", type="int", help="number of seconds to run")
+
 	(opts, args) = parser.parse_args()
-	
+	stopwatch = timeops.Stopwatch()
+	stopwatch.start()
+
 	gGeneration = 0
 	gRenderFrame = 0
 	gOptions = { 'framesPerGeneration' : 6, 'fadeGenerations' : 1 } 
@@ -199,7 +206,7 @@ if __name__ == '__main__':
 	#life(initFn_randomWhite, runFn_continuousConway, combFn_sortFade, w2d_colorplanes, 50)	
 	#life(initFn_randomWhite, runFn_continuousConway, combFn_maxFade, w2d_colorplanes, 50)	
 
-	life(initFn_randomPurple, runFn_continuousConway, combFn_average, w2d_colorplanes, opts.resetgen or 50)	
+	life(initFn_randomPurple, runFn_continuousConway, combFn_average, w2d_colorplanes, opts.resetgen or 50,	stopwatch)	
 
 	
 	sys.exit(0)

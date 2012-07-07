@@ -5,9 +5,10 @@ while (line = file.gets)
    lines[i] = line;
    i = i+1;
 end
-
+while true
 lines.each do |x|
  puts x
- system("python "+x);
+ system("/usr/bin/python "+x);
+end
 end
 

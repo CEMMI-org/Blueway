@@ -4,7 +4,7 @@ MODES = ["FILE","WEB","LIVE","GAME"]
 
 class CONFIG:
      # general settings
-     mode = 3 # 0=render to file,1=websocket, 2=live to lights, 3=pygame
+     mode = 2 # 0=render to file,1=websocket, 2=live to lights, 3=pygame
      disableColormap = True
 
      #sim settings
@@ -33,4 +33,4 @@ M = 24
 
 dt = 0.005
 mapping = [1,3,2,4]#,11,10,7,5,3,4,13,16,15,14,9,12,8,6,24,23,21,22,18,20,17,19]
-Ds = ['3','4']#,'5','6','15','16']#,'5','6','12','13','14','36','19','20','15','16']
+Ds = ['3','4','5','6','15','16']#,'5','6','12','13','14','36','19','20','15','16']
